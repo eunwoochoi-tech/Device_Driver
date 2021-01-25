@@ -1,0 +1,1 @@
+cmd_/root/kernel_source/001hello_world/main.ko := arm-linux-gnueabihf-ld -r  -EL  --build-id  -T ./scripts/module-common.lds -T ./arch/arm/kernel/module.lds -o /root/kernel_source/001hello_world/main.ko /root/kernel_source/001hello_world/main.o /root/kernel_source/001hello_world/main.mod.o;  true
