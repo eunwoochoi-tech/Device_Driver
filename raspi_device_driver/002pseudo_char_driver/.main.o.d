@@ -1,4 +1,4 @@
-main.o: /root/kernel_source/002pseudo_char_driver/main.c \
+main.o: /root/kernel_source/Device_Driver/002pseudo_char_driver/main.c \
  include/linux/kconfig.h include/generated/autoconf.h \
  include/linux/compiler_types.h include/linux/compiler_attributes.h \
  include/linux/compiler-gcc.h include/linux/module.h include/linux/list.h \
