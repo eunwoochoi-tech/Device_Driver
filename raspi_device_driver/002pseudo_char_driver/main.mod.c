@@ -34,6 +34,10 @@ __used __section(__versions) = {
 	{ 0xa9833fe3, "cdev_add" },
 	{ 0x778e5861, "cdev_init" },
 	{ 0xe3ec2f2b, "alloc_chrdev_region" },
+	{ 0x51a910c0, "arm_copy_to_user" },
+	{ 0x5f754e5a, "memset" },
+	{ 0xae353d77, "arm_copy_from_user" },
+	{ 0x2cfde9a2, "warn_slowpath_fmt" },
 	{ 0xc5850110, "printk" },
 	{ 0xb1ad28e0, "__gnu_mcount_nc" },
 };
@@ -41,4 +45,4 @@ __used __section(__versions) = {
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "3DD34DC61A3698473CD84CF");
+MODULE_INFO(srcversion, "8A27C4C558844C29EDEC967");

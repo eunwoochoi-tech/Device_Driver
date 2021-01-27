@@ -2,7 +2,8 @@ obj-m := main.o
 
 ARCH=arm
 CROSS_COMPILE=arm-linux-gnueabihf-
-KPATH=/root/kernel_source/raspberrypi-linux
+KPATH=/lib/modules/$(shell uname -r)/build
+#KPATH=/root/kernel_source/raspberrypi-linux
 PWD=$(pwd)
 
 all:

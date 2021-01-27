@@ -1,1 +1,1 @@
-cmd_/root/Device_Driver/raspi_device_driver/002pseudo_char_driver/main.mod := { echo  /root/Device_Driver/raspi_device_driver/002pseudo_char_driver/main.o; echo; } > /root/Device_Driver/raspi_device_driver/002pseudo_char_driver/main.mod
+cmd_/home/pi/git/Device_Driver/raspi_device_driver/002pseudo_char_driver/main.mod := { echo  /home/pi/git/Device_Driver/raspi_device_driver/002pseudo_char_driver/main.o; echo; } > /home/pi/git/Device_Driver/raspi_device_driver/002pseudo_char_driver/main.mod
