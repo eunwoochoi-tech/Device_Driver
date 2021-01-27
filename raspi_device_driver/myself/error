@@ -1,0 +1,59 @@
+/root/Device_Driver/raspi_device_driver/myself/main.c: In function 'pcd_init':
+/root/Device_Driver/raspi_device_driver/myself/main.c:151:17: warning: passing argument 1 of 'ERR_PTR' makes integer from pointer without a cast [-Wint-conversion]
+  151 |   ret = ERR_PTR(pcd_class);
+      |                 ^~~~~~~~~
+      |                 |
+      |                 struct class *
+In file included from ./include/linux/rwsem.h:18,
+                 from ./include/linux/mm_types.h:11,
+                 from ./include/linux/mmzone.h:21,
+                 from ./include/linux/gfp.h:6,
+                 from ./include/linux/umh.h:4,
+                 from ./include/linux/kmod.h:9,
+                 from ./include/linux/module.h:13,
+                 from /root/Device_Driver/raspi_device_driver/myself/main.c:1:
+./include/linux/err.h:24:48: note: expected 'long int' but argument is of type 'struct class *'
+   24 | static inline void * __must_check ERR_PTR(long error)
+      |                                           ~~~~~^~~~~
+/root/Device_Driver/raspi_device_driver/myself/main.c:151:7: warning: assignment to 'int' from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+  151 |   ret = ERR_PTR(pcd_class);
+      |       ^
+/root/Device_Driver/raspi_device_driver/myself/main.c:157:5: error: implicit declaration of function 'ISERR'; did you mean 'IS_ERR'? [-Werror=implicit-function-declaration]
+  157 |  if(ISERR(pcd_device))
+      |     ^~~~~
+      |     IS_ERR
+/root/Device_Driver/raspi_device_driver/myself/main.c:160:17: warning: passing argument 1 of 'ERR_PTR' makes integer from pointer without a cast [-Wint-conversion]
+  160 |   ret = ERR_PTR(pcd_device);
+      |                 ^~~~~~~~~~
+      |                 |
+      |                 struct device *
+In file included from ./include/linux/rwsem.h:18,
+                 from ./include/linux/mm_types.h:11,
+                 from ./include/linux/mmzone.h:21,
+                 from ./include/linux/gfp.h:6,
+                 from ./include/linux/umh.h:4,
+                 from ./include/linux/kmod.h:9,
+                 from ./include/linux/module.h:13,
+                 from /root/Device_Driver/raspi_device_driver/myself/main.c:1:
+./include/linux/err.h:24:48: note: expected 'long int' but argument is of type 'struct device *'
+   24 | static inline void * __must_check ERR_PTR(long error)
+      |                                           ~~~~~^~~~~
+/root/Device_Driver/raspi_device_driver/myself/main.c:160:7: warning: assignment to 'int' from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+  160 |   ret = ERR_PTR(pcd_device);
+      |       ^
+/root/Device_Driver/raspi_device_driver/myself/main.c: In function 'llseek':
+/root/Device_Driver/raspi_device_driver/myself/main.c:72:1: warning: control reaches end of non-void function [-Wreturn-type]
+   72 | }
+      | ^
+/root/Device_Driver/raspi_device_driver/myself/main.c: In function 'open':
+/root/Device_Driver/raspi_device_driver/myself/main.c:117:1: warning: control reaches end of non-void function [-Wreturn-type]
+  117 | }
+      | ^
+/root/Device_Driver/raspi_device_driver/myself/main.c: In function 'release':
+/root/Device_Driver/raspi_device_driver/myself/main.c:122:1: warning: control reaches end of non-void function [-Wreturn-type]
+  122 | }
+      | ^
+cc1: some warnings being treated as errors
+make[2]: *** [scripts/Makefile.build:266: /root/Device_Driver/raspi_device_driver/myself/main.o] Error 1
+make[1]: *** [Makefile:1732: /root/Device_Driver/raspi_device_driver/myself] Error 2
+make: *** [Makefile:7: all] Error 2
