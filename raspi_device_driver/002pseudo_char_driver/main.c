@@ -156,9 +156,14 @@ int pcd_release(struct inode * inode, struct file * filp)
 
 static int __init pcd_driver_init(void)
 {
+	int ret;
 	/* Dynamically register a range of char device numbers */
-	alloc_chrdev_region(&dev_num, 0, 1, "pcd");
-
+	ret = alloc_chrdev_region(&dev_num, 0, 1, "pcd");
+	if(ret < 0)
+	{
+		pr_err("Alloc chrdev failed\n");
+		goto alloc_chrdev_region_error;
+	}
 	pr_info("Device number <major>:<minor> = %d:%d \n", MAJOR(dev_num), MINOR(dev_num));
 
 	/* Initialize the cdev structure with fopts */
@@ -166,17 +171,44 @@ static int __init pcd_driver_init(void)
 	pcd_cdev.owner = THIS_MODULE;
 
 	/* register cdev structure to VFS */
-	cdev_add(&pcd_cdev, dev_num, 1);
-
+	ret = cdev_add(&pcd_cdev, dev_num, 1);
+	if(ret < 0)
+	{	
+		pr_err("cdev add failed\n");
+		goto cdev_add_error;
+	}
 	/* Create a directory in /sys/class ex: /sys/class/class_pcd*/
 	class_pcd = class_create(THIS_MODULE,  "pcd_class");
+	if(IS_ERR(class_pcd))
+	{
+		pr_err("Class creation failed! \n");
+		ret = PTR_ERR(class_pcd);
+		goto class_create_error;
+	}
 
 	/* Create Subdirectory under /sys/class/my_class_name and generate uevent: /sys/class/class_pcd/my_device_name/dev */
 	device_pcd = device_create(class_pcd, NULL, dev_num, NULL, "pcd");
-	
+	if(IS_ERR(device_pcd))
+	{
+		pr_err("Device create failed! \n");
+		ret = PTR_ERR(device_pcd);
+		goto device_create_error;
+	}	
 	pr_info("Module Init Success! \n");
 
 	return 0;
+
+device_create_error:
+	class_destroy(class_pcd);
+
+class_create_error:
+	cdev_del(&pcd_cdev);	
+
+cdev_add_error:
+	unregister_chrdev_region(dev_num, 1);
+
+alloc_chrdev_region_error:
+	return ret;
 }
 
 static void __exit pcd_driver_cleanup(void)
