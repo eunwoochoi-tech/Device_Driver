@@ -1,0 +1,1 @@
+cmd_/home/eunwoo/raspi/kernel_modules/main.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds  --build-id  -o /home/eunwoo/raspi/kernel_modules/main.ko /home/eunwoo/raspi/kernel_modules/main.o /home/eunwoo/raspi/kernel_modules/main.mod.o ;  true
