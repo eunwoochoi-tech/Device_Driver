@@ -334,14 +334,8 @@ static void __exit pcd_driver_cleanup(void)
 		device_destroy(pcd_drv_data.class_pcd, pcd_drv_data.dev_num+i);
 		cdev_del(&pcd_drv_data.pcd_dev_data[i].cdev);	
 	}
+	class_destroy(pcd_drv_data.class_pcd);
 	unregister_chrdev_region(pcd_drv_data.dev_num, DEVICE_NUM);
-	#if 0
-	device_destroy(class_pcd, dev_num);
-	class_destroy(class_pcd);
-	cdev_del(&pcd_cdev);
-	unregister_chrdev_region(dev_num, 1);
-	pr_info("Module unloaded");
-	#endif
 }
 
 module_init(pcd_driver_init);
