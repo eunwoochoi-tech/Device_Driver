@@ -32,6 +32,10 @@ __attribute__((section("__versions"))) = {
 	{ 0x71a3afd4, "cdev_init" },
 	{ 0xe42dbab4, "__class_create" },
 	{ 0xe3ec2f2b, "alloc_chrdev_region" },
+	{ 0x362ef408, "_copy_from_user" },
+	{ 0xb44ad4b3, "_copy_to_user" },
+	{ 0x88db9f48, "__check_object_size" },
+	{ 0xad27f361, "__warn_printk" },
 	{ 0x27e1a049, "printk" },
 	{ 0xbdfb6dbb, "__fentry__" },
 };
@@ -42,5 +46,5 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "A8AB5B9069BB628D1FDAAED");
+MODULE_INFO(srcversion, "E87EB903C3F20DC670E9DD3");
 MODULE_INFO(rhelversion, "8.3");
