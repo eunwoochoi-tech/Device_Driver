@@ -5,6 +5,6 @@
 struct pcd_dev_platform_data
 {
 	int size;
-	int perm;
+	int permission;
 	const char* serial_number;
 };

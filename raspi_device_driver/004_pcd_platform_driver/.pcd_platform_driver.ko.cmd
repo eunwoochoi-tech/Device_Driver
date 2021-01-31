@@ -1,0 +1,1 @@
+cmd_/home/eunwoo/test/pcd_platform_driver.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds  --build-id  -o /home/eunwoo/test/pcd_platform_driver.ko /home/eunwoo/test/pcd_platform_driver.o /home/eunwoo/test/pcd_platform_driver.mod.o ;  true
