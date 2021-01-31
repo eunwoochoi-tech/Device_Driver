@@ -38,8 +38,44 @@ int check_permission(int dev_perm, int acc_mode);
 
 int pcd_platform_driver_probe(struct platform_device* pdev)
 {
+	struct pcd_dev_private_data* dev_data;
+	struct pcd_dev_platform_data* pdata;
+
+	// pdata = pdev->dev.platform_data;
+	pdata = (struct pcd_dev_platform_data*)dev_get_platdata(&pdev->dev);	
+	if(!pdata)
+	{
+		pr_info("No platform data available \n");
+		ret = -EINVAL;
+		goto out;
+	}
+
+	dev_data = kzalloc(sizeof(*dev_data), GFP_KERNEL);
+	if(!dev_data)
+	{
+		pr_info("Cannot allocate memory \n");
+		ret = -ENOMEM;
+		go out;
+	}
+
+	dev_data->pdata.size = pdata->size;
+	dev_data->pdata.perm = pdata->perm;
+	dev_data->pdata.serial_number = pdata->serial_number;
+
+	pr_info("Device serial number : %s \n", dev_data->pdata.serial.number);
+	pr_info("size : %s \n", dev_data->pdata.size);
+	pr_info("permission : %s \n", dev_data->pdata.perm);
+
+	
+
+
+
 	pr_info("a device is detected \n");	
 	return 0;
+	
+out:
+	pr_info("Device probe failed!\n");
+	return ret;
 }
 
 int pcd_platform_driver_remove(struct platform_device* pdev)
