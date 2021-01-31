@@ -2,8 +2,6 @@
 #include <linux/platform_device.h>
 #include "platform.h"
 
-#define DEV_NUM	3
-
 void pcd_device_release(struct device* dev);
 
 struct pcd_dev_platform_data pcd_private_data[DEV_NUM] = {

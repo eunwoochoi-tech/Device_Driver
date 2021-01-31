@@ -1,12 +1,15 @@
+#include <linux/build-salt.h>
 #include <linux/module.h>
 #include <linux/vermagic.h>
 #include <linux/compiler.h>
+
+BUILD_SALT;
 
 MODULE_INFO(vermagic, VERMAGIC_STRING);
 MODULE_INFO(name, KBUILD_MODNAME);
 
 __visible struct module __this_module
-__attribute__((section(".gnu.linkonce.this_module"))) = {
+__section(.gnu.linkonce.this_module) = {
 	.name = KBUILD_MODNAME,
 	.init = init_module,
 #ifdef CONFIG_MODULE_UNLOAD
@@ -15,29 +18,33 @@ __attribute__((section(".gnu.linkonce.this_module"))) = {
 	.arch = MODULE_ARCH_INIT,
 };
 
-#ifdef RETPOLINE
+#ifdef CONFIG_RETPOLINE
 MODULE_INFO(retpoline, "Y");
 #endif
 
 static const struct modversion_info ____versions[]
-__used
-__attribute__((section("__versions"))) = {
-	{ 0xf8cdd757, "module_layout" },
-	{ 0x21e01071, "class_destroy" },
-	{ 0x1a1ebac7, "platform_driver_unregister" },
-	{ 0x709c4323, "__platform_driver_register" },
+__used __section(__versions) = {
+	{ 0xe7cc3b88, "module_layout" },
+	{ 0x21ccf193, "class_destroy" },
+	{ 0xacda826, "platform_driver_unregister" },
+	{ 0x7d7bf51f, "__platform_driver_register" },
 	{ 0x6091b333, "unregister_chrdev_region" },
-	{ 0xe42dbab4, "__class_create" },
+	{ 0x5ba17792, "__class_create" },
 	{ 0xe3ec2f2b, "alloc_chrdev_region" },
-	{ 0x27e1a049, "printk" },
-	{ 0xbdfb6dbb, "__fentry__" },
+	{ 0xcd4c837a, "device_create" },
+	{ 0xa9833fe3, "cdev_add" },
+	{ 0x778e5861, "cdev_init" },
+	{ 0x2d6fcc06, "__kmalloc" },
+	{ 0xa9a5f9a6, "kmem_cache_alloc_trace" },
+	{ 0xcda51ca2, "kmalloc_caches" },
+	{ 0x37a0cba, "kfree" },
+	{ 0x8d9908e9, "cdev_del" },
+	{ 0x1ac09638, "device_destroy" },
+	{ 0xc5850110, "printk" },
+	{ 0xb1ad28e0, "__gnu_mcount_nc" },
 };
 
-static const char __module_depends[]
-__used
-__attribute__((section(".modinfo"))) =
-"depends=";
+MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "5F482598B4935CDF219DFEE");
-MODULE_INFO(rhelversion, "8.3");
+MODULE_INFO(srcversion, "3D7518EA6189F77C382A2EA");

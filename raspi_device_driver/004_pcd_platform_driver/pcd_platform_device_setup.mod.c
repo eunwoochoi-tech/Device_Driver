@@ -1,12 +1,15 @@
+#include <linux/build-salt.h>
 #include <linux/module.h>
 #include <linux/vermagic.h>
 #include <linux/compiler.h>
+
+BUILD_SALT;
 
 MODULE_INFO(vermagic, VERMAGIC_STRING);
 MODULE_INFO(name, KBUILD_MODNAME);
 
 __visible struct module __this_module
-__attribute__((section(".gnu.linkonce.this_module"))) = {
+__section(.gnu.linkonce.this_module) = {
 	.name = KBUILD_MODNAME,
 	.init = init_module,
 #ifdef CONFIG_MODULE_UNLOAD
@@ -15,25 +18,20 @@ __attribute__((section(".gnu.linkonce.this_module"))) = {
 	.arch = MODULE_ARCH_INIT,
 };
 
-#ifdef RETPOLINE
+#ifdef CONFIG_RETPOLINE
 MODULE_INFO(retpoline, "Y");
 #endif
 
 static const struct modversion_info ____versions[]
-__used
-__attribute__((section("__versions"))) = {
-	{ 0xf8cdd757, "module_layout" },
-	{ 0x7551cdc9, "platform_device_unregister" },
-	{ 0xba52fb10, "platform_device_register" },
-	{ 0x27e1a049, "printk" },
-	{ 0xbdfb6dbb, "__fentry__" },
+__used __section(__versions) = {
+	{ 0xe7cc3b88, "module_layout" },
+	{ 0x5ffcbca9, "platform_device_unregister" },
+	{ 0xb1b4f8ca, "platform_device_register" },
+	{ 0xc5850110, "printk" },
+	{ 0xb1ad28e0, "__gnu_mcount_nc" },
 };
 
-static const char __module_depends[]
-__used
-__attribute__((section(".modinfo"))) =
-"depends=";
+MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "F040A5D551A2D811972B013");
-MODULE_INFO(rhelversion, "8.3");
+MODULE_INFO(srcversion, "64382A45189F22A2753CFC1");
