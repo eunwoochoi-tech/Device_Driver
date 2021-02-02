@@ -47,7 +47,7 @@ struct platform_device pcd_platform_device[DEV_NUM] = {
 		.name = "pcd-device",
 		.id = 2,
 		.dev = {
-			.platform_data = &pcd_private_data[0],
+			.platform_data = &pcd_private_data[2],
 			.release = pcd_device_release
 		}
 
