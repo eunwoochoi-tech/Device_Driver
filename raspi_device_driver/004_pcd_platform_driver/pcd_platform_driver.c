@@ -6,6 +6,7 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include "platform.h"
+
 #undef pr_fmt
 #define pr_fmt(fmt) "%s : " fmt,__func__
  

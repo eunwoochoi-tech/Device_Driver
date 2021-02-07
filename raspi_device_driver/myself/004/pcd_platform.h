@@ -5,6 +5,7 @@
 
 struct pcd_driver_private_data
 {
+	dev_t dev_num_base;
 	int dev_num;
 	struct class* pcd_class;
 	struct device* pcd_device;

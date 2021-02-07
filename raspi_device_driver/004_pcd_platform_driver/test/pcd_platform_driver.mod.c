@@ -37,14 +37,14 @@ __used __section(__versions) = {
 	{ 0x2d6fcc06, "__kmalloc" },
 	{ 0xa9a5f9a6, "kmem_cache_alloc_trace" },
 	{ 0xcda51ca2, "kmalloc_caches" },
+	{ 0xc5850110, "printk" },
 	{ 0x37a0cba, "kfree" },
 	{ 0x8d9908e9, "cdev_del" },
 	{ 0x1ac09638, "device_destroy" },
-	{ 0xc5850110, "printk" },
 	{ 0xb1ad28e0, "__gnu_mcount_nc" },
 };
 
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "3D7518EA6189F77C382A2EA");
+MODULE_INFO(srcversion, "CB595E7B872C3D8F3CA3BE0");
