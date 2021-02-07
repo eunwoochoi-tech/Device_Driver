@@ -6,6 +6,7 @@
 #include <linux/uaccess.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
+#include <linux/mod_devicetable.h>
 #include "platform.h"
 
 int pcd_platform_driver_probe(struct platform_device*);
@@ -16,11 +17,27 @@ ssize_t write(struct file*, const char __user*, size_t, loff_t*);
 int open(struct inode*, struct file*);
 int release(struct inode*, struct file*);
 
+enum PCD_DEV_NAMES
+{
+	PCD_DEV_A1X,
+	PCD_DEV_B1X,
+	PCD_DEV_C1X,
+	PCD_DEV_D1X
+};
+
+struct platform_device_id pcd_dev_ids[] = 
+{
+	[PCD_DEV_A1X] = { .name = "pcd_dev-A1x", .driver_data = PCD_DEV_A1X },
+	[PCD_DEV_B1X] = { .name = "pcd_dev-B1x", .driver_data = PCD_DEV_B1X },
+	[PCD_DEV_C1X] = { .name = "pcd_dev-C1x", .driver_data = PCD_DEV_C1X },
+	[PCD_DEV_D1X] = { .name = "pcd_dev-D1x", .driver_data = PCD_DEV_D1X }
+};
 struct platform_driver pcd_platform_driver = {
 	.probe = pcd_platform_driver_probe,
 	.remove = pcd_platform_driver_remove,
+	.id_table = pcd_dev_ids,
 	.driver = {
-		.name = "pcd_dev"
+		.name = "psudo"
 	}
 };
 
@@ -34,6 +51,13 @@ struct file_operations f_ops = {
 };
 
 struct pcd_driver_private_data pcd_drv_data;
+
+struct device_config pcd_dev_config[] = {
+	[0] = {.config_item1 = 60, .config_item2 = 21},
+	[1] = {.config_item1 = 50, .config_item2 = 22},
+	[2] = {.config_item1 = 40, .config_item2 = 23},
+	[3] = {.config_item1 = 30, .config_item2 = 24}
+};
 
 static int __init pcd_platform_driver_init(void)
 {
@@ -89,8 +113,8 @@ int pcd_platform_driver_probe(struct platform_device* pdev)
 		return ret;
 	}
 
-	pcd_dev_data = (struct pcd_device_private_data*)kzalloc(sizeof(struct pcd_device_private_data), GFP_KERNEL);
-	if(!pcd_dev_data)
+	pcd_dev_data = devm_kzalloc(&pdev->dev, sizeof(struct pcd_device_private_data), GFP_KERNEL);
+if(!pcd_dev_data)
 	{
 		pr_info("Kernel alloc failed! \n" );
 		ret = -ENOMEM;
@@ -108,7 +132,10 @@ int pcd_platform_driver_probe(struct platform_device* pdev)
 	pr_info("Device perm : %d \n", pcd_dev_data->pcd_pdata.perm);
 	pr_info("Device size : %d \n", pcd_dev_data->pcd_pdata.size);
 
-	pcd_dev_data->buffer = (char*)kzalloc(pcd_dev_data->pcd_pdata.size, GFP_KERNEL);
+	pr_info("Config item 1 = %d \n", pcd_dev_config[pdev->id_entry->driver_data].config_item1);
+	pr_info("Config item 2 = %d \n", pcd_dev_config[pdev->id_entry->driver_data].config_item2);
+
+	pcd_dev_data->buffer = devm_kzalloc(&pdev->dev, pcd_dev_data->pcd_pdata.size, GFP_KERNEL);
 	if(!pcd_dev_data->buffer)
 	{
 		pr_info("Cannot allocate memory \n");
@@ -143,10 +170,9 @@ int pcd_platform_driver_probe(struct platform_device* pdev)
 class_del:
 	cdev_del(&pcd_dev_data->pcd_cdev);
 buffer_free:
-	kfree(pcd_dev_data->buffer);
-
+	devm_kfree(&pdev->dev, pcd_dev_data->buffer);
 dev_data_free:
-	kfree(pcd_dev_data);
+	devm_kfree(&pdev->dev, pcd_dev_data);
 	return ret;
 }
 
@@ -158,10 +184,6 @@ int pcd_platform_driver_remove(struct platform_device* pdev)
 
 	// cdev
 	cdev_del(&dev_data->pcd_cdev);
-
-	// buffer
-	kfree(dev_data->buffer);
-	kfree(dev_data);
 
 	// device_data
 	pcd_drv_data.total_devices--;

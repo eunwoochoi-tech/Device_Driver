@@ -758,6 +758,7 @@ deps_/home/pi/git/Device_Driver/raspi_device_driver/004_pcd_platform_driver/test
   include/linux/percpu-refcount.h \
   include/linux/kasan.h \
     $(wildcard include/config/kasan/generic.h) \
+  include/linux/mod_devicetable.h \
   /home/pi/git/Device_Driver/raspi_device_driver/004_pcd_platform_driver/test/platform.h \
 
 /home/pi/git/Device_Driver/raspi_device_driver/004_pcd_platform_driver/test/pcd_platform_driver.o: $(deps_/home/pi/git/Device_Driver/raspi_device_driver/004_pcd_platform_driver/test/pcd_platform_driver.o)

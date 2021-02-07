@@ -26,7 +26,7 @@ static const struct modversion_info ____versions[]
 __used __section(__versions) = {
 	{ 0xe7cc3b88, "module_layout" },
 	{ 0x5ffcbca9, "platform_device_unregister" },
-	{ 0xb1b4f8ca, "platform_device_register" },
+	{ 0xc5a5cbb9, "platform_add_devices" },
 	{ 0xc5850110, "printk" },
 	{ 0xb1ad28e0, "__gnu_mcount_nc" },
 };
@@ -34,4 +34,4 @@ __used __section(__versions) = {
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "9500A6E0FF075A038EBBFF2");
+MODULE_INFO(srcversion, "337C0FC6CCB82F452E9FCDA");

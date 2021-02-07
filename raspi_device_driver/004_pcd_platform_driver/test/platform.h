@@ -28,3 +28,9 @@ struct pcd_driver_private_data
 	struct class* pcd_class;
 	struct device* pcd_device;
 };
+
+struct device_config
+{
+	int config_item1;
+	int config_item2;
+};
