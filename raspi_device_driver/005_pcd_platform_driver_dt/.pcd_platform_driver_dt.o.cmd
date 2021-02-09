@@ -759,6 +759,15 @@ deps_/home/pi/git/Device_Driver/raspi_device_driver/005_pcd_platform_driver_dt/p
   include/linux/kasan.h \
     $(wildcard include/config/kasan/generic.h) \
   include/linux/mod_devicetable.h \
+  include/linux/of.h \
+    $(wildcard include/config/of/dynamic.h) \
+    $(wildcard include/config/sparc.h) \
+    $(wildcard include/config/of/promtree.h) \
+    $(wildcard include/config/of/kobj.h) \
+    $(wildcard include/config/of/numa.h) \
+    $(wildcard include/config/of/overlay.h) \
+  include/linux/property.h \
+  include/linux/fwnode.h \
   /home/pi/git/Device_Driver/raspi_device_driver/005_pcd_platform_driver_dt/platform.h \
 
 /home/pi/git/Device_Driver/raspi_device_driver/005_pcd_platform_driver_dt/pcd_platform_driver_dt.o: $(deps_/home/pi/git/Device_Driver/raspi_device_driver/005_pcd_platform_driver_dt/pcd_platform_driver_dt.o)

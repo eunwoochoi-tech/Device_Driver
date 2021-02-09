@@ -111,8 +111,10 @@ static void __exit pcd_platform_driver_cleanup(void)
 
 int pcd_platform_driver_probe(struct platform_device* pdev)
 {
-	int ret;
 
+	pr_info("A device is detected \n");
+#if 0
+	int ret;
 	struct pcd_device_private_data* pcd_dev_data;
 	// struct pcd_platform_data* pdata = (struct pcd_platform_data*)dev_get_platdata(&pdev->dev);
 	struct pcd_platform_data* pdata = pdev->dev.platform_data;
@@ -184,10 +186,13 @@ buffer_free:
 dev_data_free:
 	devm_kfree(&pdev->dev, pcd_dev_data);
 	return ret;
+#endif
+	return 0;
 }
 
 int pcd_platform_driver_remove(struct platform_device* pdev)
 {
+#if 0
 	struct pcd_device_private_data* dev_data = dev_get_drvdata(&pdev->dev);
 	// device
 	device_destroy(pcd_drv_data.pcd_class, dev_data->dev_num);
@@ -197,7 +202,7 @@ int pcd_platform_driver_remove(struct platform_device* pdev)
 
 	// device_data
 	pcd_drv_data.total_devices--;
-
+#endif
 	pr_info("a device is removed \n");
 	return 0;
 }
