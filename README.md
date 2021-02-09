@@ -10,5 +10,5 @@
  - 2021-01-30 Finished
  
 ## 004_pcd_platform_driver
- ### Platform device, Platform driver, Device Driver, Device 의 차이점 구분하기
+   ### Platform device, Platform driver, Device Driver, Device 의 차이점 구분하기
  - 2021-02-08 Finished
