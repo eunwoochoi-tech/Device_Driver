@@ -7,6 +7,7 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/mod_devicetable.h>
+#include <linux/of.h>
 #include "platform.h"
 
 int pcd_platform_driver_probe(struct platform_device*);
@@ -25,6 +26,14 @@ enum PCD_DEV_NAMES
 	PCD_DEV_D1X
 };
 
+struct of_device_id pcd_dev_dt_match[] = 
+{
+	{.compatible = "pcd_dev-A1x", .data = (void*)PCD_DEV_A1X},
+	{.compatible = "pcd_dev-B1x", .data = (void*)PCD_DEV_B1X},
+	{.compatible = "pcd_dev-C1x", .data = (void*)PCD_DEV_C1X},
+	{.compatible = "pcd_dev-D1x", .data = (void*)PCD_DEV_D1X},
+};
+
 struct platform_device_id pcd_dev_ids[] = 
 {
 	[PCD_DEV_A1X] = { .name = "pcd_dev-A1x", .driver_data = PCD_DEV_A1X },
@@ -37,7 +46,8 @@ struct platform_driver pcd_platform_driver = {
 	.remove = pcd_platform_driver_remove,
 	.id_table = pcd_dev_ids,
 	.driver = {
-		.name = "psudo"
+		.name = "psudo",
+		.of_match_table = pcd_dev_dt_match
 	}
 };
 
