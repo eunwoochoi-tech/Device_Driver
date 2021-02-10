@@ -1,6 +1,7 @@
-obj-m := pcd_device_setup.o pcd_platform_driver.o
+obj-m := pcd_device_setup.o 
 
-KPATH=/lib/modules/$(shell uname -r)/build
+KPATH=/root/kernel_module/BBB_Linux_5.4
+#KPATH=/lib/modules/$(shell uname -r)/build
 KPATH_PI=/root/kernel_source/raspberrypi-linux
 
 all:

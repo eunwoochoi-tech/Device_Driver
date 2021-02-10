@@ -8,6 +8,7 @@
 #include <linux/slab.h>
 #include <linux/mod_devicetable.h>
 #include <linux/of.h>
+#include <linux/of_device.h>
 #include "platform.h"
 
 int pcd_platform_driver_probe(struct platform_device*);
@@ -47,7 +48,7 @@ struct platform_driver pcd_platform_driver = {
 	.id_table = pcd_dev_ids,
 	.driver = {
 		.name = "psudo",
-		.of_match_table = pcd_dev_dt_match
+		.of_match_table = of_match_ptr(pcd_dev_dt_match)
 	}
 };
 
@@ -109,16 +110,16 @@ static void __exit pcd_platform_driver_cleanup(void)
 	pr_info("pcd platform driver unload \n");
 }
 
-struct pcd_platform_data* pcd_dev_platdata_from_dt(struct device* dev)
+struct pcd_platform_data* pcd_dev_get_platdata_from_dt(struct device* dev)
 {
-	struct pcd_dev_platform_data *pdata;
+	struct pcd_platform_data *pdata;
 	struct device_node* dev_node = dev->of_node; // device_node present DT
 	if(!dev_node)
 	{
 		return NULL;
 	}
 
-	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+	pdata = devm_kzalloc(dev, sizeof(struct pcd_platform_data), GFP_KERNEL);
 	if(!pdata)
 	{
 		dev_info(dev, "Cannot allocate memory \n");
@@ -153,23 +154,28 @@ int pcd_platform_driver_probe(struct platform_device* pdev)
 	struct pcd_platform_data* pdata;
 	struct device* dev = &pdev->dev;
 	// struct pcd_platform_data* pdata = (struct pcd_platform_data*)dev_get_platdata(&pdev->dev);
-	pdata = pcd_dev_get_platdata_from_dt(dev);
 
-	if(IS_ERR(pdata))
+	match = of_match_device(of_match_ptr(pcd_dev_dt_match), dev);
+
+	if(match)
 	{
-		return ERR_PTR(pdata);
+		pdata = pcd_dev_get_platdata_from_dt(dev);
+		if(IS_ERR(pdata))
+		{
+			return PTR_ERR(pdata);
+		}
+		driver_data = pdev->id_entry->driver_data;
+	}
+	else
+	{
+		driver_data = pdev->id_entry->driver_data;
 	}
 
 	if(!pdata)
 	{
-		pdata = (struct pcd_dev_platform_data*)dev_get_platdata(dev);
-		if(!pdata)
-		{
-			dev__info(dev, "No platform data available \n");
-			ret = -EINVAL;
-			return ret;
-		}
-		driver_data = pdev->id_entry->driver_data;
+		dev_info(dev, "No platform data available \n");
+		ret = -EINVAL;
+		return ret;
 	}
 	else
 	{
@@ -210,7 +216,7 @@ int pcd_platform_driver_probe(struct platform_device* pdev)
 		goto dev_data_free;
 	}
 
-	pcd_dev_data->dev_num = pcd_drv_data.base_dev_num + pdev->id;
+	pcd_dev_data->dev_num = pcd_drv_data.base_dev_num + pcd_drv_data.total_devices;
 
 	cdev_init(&pcd_dev_data->pcd_cdev, &f_ops);
 	pcd_dev_data->pcd_cdev.owner = THIS_MODULE;
@@ -222,7 +228,7 @@ int pcd_platform_driver_probe(struct platform_device* pdev)
 		goto buffer_free;
 	}
 
-	pcd_drv_data.pcd_device = device_create(pcd_drv_data.pcd_class, NULL, pcd_dev_data->dev_num, NULL, "pcd-%d", pdev->id);
+	pcd_drv_data.pcd_device = device_create(pcd_drv_data.pcd_class, dev, pcd_dev_data->dev_num, NULL, "pcd-%d", pcd_drv_data.total_devices);
 	if(IS_ERR(pcd_drv_data.pcd_device))
 	{
 		pr_err("Device create failed \n ");
