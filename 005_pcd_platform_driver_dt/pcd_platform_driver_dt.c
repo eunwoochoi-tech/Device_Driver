@@ -109,24 +109,79 @@ static void __exit pcd_platform_driver_cleanup(void)
 	pr_info("pcd platform driver unload \n");
 }
 
-int pcd_platform_driver_probe(struct platform_device* pdev)
+struct pcd_platform_data* pcd_dev_platdata_from_dt(struct device* dev)
 {
+	struct pcd_dev_platform_data *pdata;
+	struct device_node* dev_node = dev->of_node; // device_node present DT
+	if(!dev_node)
+	{
+		return NULL;
+	}
 
-	pr_info("A device is detected \n");
-#if 0
-	int ret;
-	struct pcd_device_private_data* pcd_dev_data;
-	// struct pcd_platform_data* pdata = (struct pcd_platform_data*)dev_get_platdata(&pdev->dev);
-	struct pcd_platform_data* pdata = pdev->dev.platform_data;
+	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
 	if(!pdata)
 	{
-		pr_info("No platform data available \n");
-		ret = -EINVAL;
-		return ret;
+		dev_info(dev, "Cannot allocate memory \n");
+		return ERR_PTR(-ENOMEM);
+	}
+	if(of_property_read_string(dev_node, "org,serial-number", &pdata->serial_number))
+	{
+		dev_info(dev, "Missing serial number property \n");
+		return ERR_PTR(-EINVAL);
+	}
+
+	if(of_property_read_u32(dev_node, "org,size", &pdata->size))
+	{
+		dev_info(dev, "Missing size operation \n");
+		return ERR_PTR(-EINVAL);
+	}
+	if(of_property_read_u32(dev_node, "org,perm", &pdata->perm))
+	{
+		dev_info(dev, "Missing perm operation \n");
+		return ERR_PTR(-EINVAL);
+	}
+
+	return pdata;
+}
+
+int pcd_platform_driver_probe(struct platform_device* pdev)
+{
+	int ret;
+	int driver_data;
+	struct of_device_id* match;
+	struct pcd_device_private_data* pcd_dev_data;
+	struct pcd_platform_data* pdata;
+	struct device* dev = &pdev->dev;
+	// struct pcd_platform_data* pdata = (struct pcd_platform_data*)dev_get_platdata(&pdev->dev);
+	pdata = pcd_dev_get_platdata_from_dt(dev);
+
+	if(IS_ERR(pdata))
+	{
+		return ERR_PTR(pdata);
+	}
+
+	if(!pdata)
+	{
+		pdata = (struct pcd_dev_platform_data*)dev_get_platdata(dev);
+		if(!pdata)
+		{
+			dev__info(dev, "No platform data available \n");
+			ret = -EINVAL;
+			return ret;
+		}
+		driver_data = pdev->id_entry->driver_data;
+	}
+	else
+	{
+		// to get driver_data(index) from device(dt), we must use of_match_device function
+		// driver_data = (int)of_device_get_match_data(&pdev->dev);
+		match = of_match_device(pdev->dev.driver->of_match_table, dev);
+		driver_data = (int)match->data;
 	}
 
 	pcd_dev_data = devm_kzalloc(&pdev->dev, sizeof(struct pcd_device_private_data), GFP_KERNEL);
-if(!pcd_dev_data)
+
+	if(!pcd_dev_data)
 	{
 		pr_info("Kernel alloc failed! \n" );
 		ret = -ENOMEM;
@@ -144,8 +199,8 @@ if(!pcd_dev_data)
 	pr_info("Device perm : %d \n", pcd_dev_data->pcd_pdata.perm);
 	pr_info("Device size : %d \n", pcd_dev_data->pcd_pdata.size);
 
-	pr_info("Config item 1 = %d \n", pcd_dev_config[pdev->id_entry->driver_data].config_item1);
-	pr_info("Config item 2 = %d \n", pcd_dev_config[pdev->id_entry->driver_data].config_item2);
+	pr_info("Config item 1 = %d \n", pcd_dev_config[driver_data].config_item1);
+	pr_info("Config item 2 = %d \n", pcd_dev_config[driver_data].config_item2);
 
 	pcd_dev_data->buffer = devm_kzalloc(&pdev->dev, pcd_dev_data->pcd_pdata.size, GFP_KERNEL);
 	if(!pcd_dev_data->buffer)
@@ -186,13 +241,10 @@ buffer_free:
 dev_data_free:
 	devm_kfree(&pdev->dev, pcd_dev_data);
 	return ret;
-#endif
-	return 0;
 }
 
 int pcd_platform_driver_remove(struct platform_device* pdev)
 {
-#if 0
 	struct pcd_device_private_data* dev_data = dev_get_drvdata(&pdev->dev);
 	// device
 	device_destroy(pcd_drv_data.pcd_class, dev_data->dev_num);
@@ -202,8 +254,7 @@ int pcd_platform_driver_remove(struct platform_device* pdev)
 
 	// device_data
 	pcd_drv_data.total_devices--;
-#endif
-	pr_info("a device is removed \n");
+	dev_info(&pdev->dev, "a device is removed \n");
 	return 0;
 }
 
