@@ -137,9 +137,10 @@ int pdrv_probe(struct platform_device* pdev)
 	{
 		pdev_data = get_platform_device_data_from_dt(pdev);
 	}
-	else if()
+	else if(dev->platform_data)
 	{
-
+		pdev_data = (struct platform_data*)dev->platform_data;
+		driver_data = pdev->id_entry->driver_data;
 	}
 	else
 	{
