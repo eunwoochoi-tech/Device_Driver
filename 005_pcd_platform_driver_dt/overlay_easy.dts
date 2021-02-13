@@ -1,0 +1,19 @@
+/dts-v1/;
+/plugin/;
+
+/{
+	&pcdev1 {
+		status = "ok";
+	};
+	&pcdev2 {
+		status = "disabled";
+	};
+	&pcdev3 {
+		status = "ok";
+		org,size = <4096>;
+		org,device-serial-num = "PCD33333";
+	};
+	&pcdev4 {
+		status = "disabled";
+	};
+};

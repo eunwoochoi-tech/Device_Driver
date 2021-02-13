@@ -4,12 +4,14 @@
 		org,size = <512>;
 		org,device-serial-num = "PCD1";
 		org,perm = <0x11>;
+		status = "disabled";
 	};
 	pcdev2: pcdev-2 {
 		compatible = "pcd_dev-B1x";
 		org,size = <1024>;
 		org,device-serial-num = "PCD2";
 		org,perm = <0x01>;
+		status = "ok";
 	};
 
 	pcdev3: pcdev-3 {
@@ -17,11 +19,13 @@
 		org,size = <512>;
 		org,device-serial-num = "PCD3";
 		org,perm = <0x11>;
+		status = "disabled";
 	};
 	pcdev4: pcdev-4 {
 		compatible = "pcd_dev-D1x";
 		org,size = <512>;
 		org,device-serial-num = "PCD4";
 		org,perm = <0x10>;
+		status = "okay";
 	};
 };
