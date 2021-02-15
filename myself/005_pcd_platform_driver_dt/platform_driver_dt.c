@@ -9,6 +9,17 @@ ssize_t write_fops(struct file*, const char __user*, size_t, loff_t*);
 int open_fops(struct inode*, struct file*);
 int release_fops(struct inode*, struct file*);
 
+static ssize_t max_size_show(struct device* dev, struct device_attribute* attr, char* buf)
+{
+	return 0;
+}
+static ssize_t max_size_store(struct device* dev, struct device_attribute* attr, const char* buf, size_t count)
+{
+	return 0;
+}
+
+DEVICE_ATTR(max_size, S_IWUSR, max_size_show, max_size_store);
+
 struct file_operations f_ops = {
 	.owner = THIS_MODULE,
 	.open = open_fops,
@@ -139,14 +150,33 @@ int pdrv_probe(struct platform_device* pdev)
 	}
 	else if(dev->platform_data)
 	{
-		pdev_data = (struct platform_data*)dev->platform_data;
-		driver_data = pdev->id_entry->driver_data;
+		pdev_data = (struct platform_device_data*)dev->platform_data;
+		//drv_data = pdev->id_entry->driver_data;
 	}
 	else
 	{
-
+		pr_err("No platform_data \n");
+		return -EINVAL;
 	}
 
+	dev_data->pdev_data = pdev_data;
+	dev_data->dev_num = drv_data.base_dev_num + drv_data.total_devices;
+	dev_data->buf = devm_kzalloc(dev, dev_data->pdev_data->size, GFP_KERNEL);
+
+	cdev_init(&dev_data->cdev, &f_ops);
+	dev_data->cdev.owner = THIS_MODULE;
+	ret = cdev_add(&dev_data->cdev, dev_data->dev_num, 1);
+	if(ret < 0)
+	{
+		pr_err("cdev_add error \n");
+		return -EINVAL;
+	}
+
+	drv_data.device = device_create(drv_data.class, NULL, dev_data->dev_num, NULL, "pcd-%d", drv_data.total_devices);
+
+	sysfs_create_file(&drv_data.device->kobj, &dev_attr_max_size.attr);
+
+	drv_data.total_devices++;
 	dev_info(dev, "pdrv_probe end \n");
 
 	return 0;

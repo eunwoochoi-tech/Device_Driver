@@ -14,6 +14,7 @@
 
 struct device_data
 {
+	struct platform_device_data* pdev_data;
 	const char* buf;
 	dev_t dev_num;
 	struct cdev cdev;
