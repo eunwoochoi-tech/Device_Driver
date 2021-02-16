@@ -1,7 +1,7 @@
 obj-m := pcd_sysfs.o
 pcd_sysfs-objs := pcd_platform_driver.o pcd_platform_driver_sysfs_dt.o
 
-KPATH=/srv/nfs/BBB_linux
+KPATH=/root/kernel_module/BBB_Linux_5.4
 KPATH_PI=/lib/modules/$(shell uname -r)/build
 ARCH=arm
 CROSS_COMPILE=arm-linux-gnueabihf-
