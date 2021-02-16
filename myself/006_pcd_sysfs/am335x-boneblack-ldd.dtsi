@@ -1,0 +1,26 @@
+/ {
+	pcd1: pcdev-1 {
+		compatible = "pcd1";
+		org,size = <512>;
+		org,perm = <0x11>;
+		org,serial-number = "pcdev111";
+	};
+	pcd2: pcdev-2 {
+		compatible = "pcd2";
+		org,size = <512>;
+		org,perm = <0x11>;
+		org,serial-number = "pcdev222";
+	};
+	pcd3: pcdev-3 {
+		compatible = "pcd3";
+		org,size = <1024>;
+		org,perm = <0x01>;
+		org,serial-number = "pcdev333";
+	};
+	pcd4: pcdev-4 {
+		compatible = "pcd4";
+		org,size = <1024>;
+		org,perm = <0x10>;
+		org,serial-number = "pcdev444";
+	};
+};
