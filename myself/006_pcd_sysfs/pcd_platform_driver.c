@@ -76,12 +76,6 @@ int get_data_from_dt(struct device* pDev)
 	int ret;
 	struct device_node* pDevNode = pDev->of_node;
 
-	pDevData = devm_kzalloc(pDev, sizeof(SDeviceData), GFP_KERNEL);
-	if(!pDevData)
-	{
-		dev_err(pDev, "devm_kzalloc error \n");
-		return -ENOMEM;
-	}
 
 	pDevData->_devNum = drvData._baseDevNum + drvData._totalDevices;
 	ret = of_property_read_u32(pDevNode, "org,size", &pDevData->_size);
@@ -133,8 +127,16 @@ int pdrv_probe(struct platform_device* pPlatDev)
 
 	dev_info(pDev, "DT is detected \n");
 
+	pDevData = devm_kzalloc(pDev, sizeof(SDeviceData), GFP_KERNEL);
+	if(!pDevData)
+	{
+		dev_err(pDev, "devm_kzalloc error \n");
+		return -ENOMEM;
+	}
+	pDev->driver_data = pDevData;
+
 	ret = get_data_from_dt(pDev);	
-	if(!ret)
+	if(ret)
 	{
 		dev_err(pDev, "get_data_from_dt error \n");
 		return ret;
@@ -162,6 +164,8 @@ int pdrv_probe(struct platform_device* pPlatDev)
 		cdev_del(&pDevData->_cdev);
 	}
 
+	drvData._totalDevices++;
+
 	dev_info(pDev, "platform drvier probe end \n");
 	return 0;
 }
@@ -169,6 +173,7 @@ int pdrv_probe(struct platform_device* pPlatDev)
 int pdrv_remove(struct platform_device* pPlatDev)
 {
 	struct device* pDev = &pPlatDev->dev;
+	struct _SDeviceData* pDevData = (struct _SDeviceData*)pDev->driver_data;
 
 	dev_info(pDev, "platform driver remove start \n");
 
@@ -176,6 +181,8 @@ int pdrv_remove(struct platform_device* pPlatDev)
 
 	cdev_del(&pDevData->_cdev);
 	
+	drvData._totalDevices--;
+
 	dev_info(pDev, "platform driver remove end \n");
 	return 0;
 }
