@@ -8,14 +8,16 @@ struct file_operations fOps = {
 	.release = release
 };
 
-struct of_device_id ofDevId[NUM_OF_DEV] = {
+struct of_device_id ofDevId[NUM_OF_DEV] =
+{
 	[0] = { .compatible = "pcd1" },
 	[1] = { .compatible = "pcd2" },
 	[2] = { .compatible = "pcd3" },
 	[3] = { .compatible = "pcd4" }
 };
 
-struct platform_driver pDrv = {
+struct platform_driver pDrv =
+{
 	.probe = pdrv_probe,
 	.remove = pdrv_remove,
 	.driver = {
@@ -29,6 +31,14 @@ SDriverData drvData;
 SDeviceData* pDevData;
 
 DEVICE_ATTR(max_size, S_IWUSR | S_IRUGO, max_size_show, max_size_store);
+struct attribute* pArrAttr[] =
+{
+	&dev_attr_max_size.attr
+};
+struct attribute_group attrGroup =
+{
+	.attrs = pArrAttr
+};
 
 loff_t llseek(struct file* filp, loff_t offest, int count)
 {
@@ -61,14 +71,33 @@ int release(struct inode* inode, struct file* filp)
 
 ssize_t max_size_show(struct device* pDev, struct device_attribute* pDevAttr, char* buf)
 {
+	struct _SDeviceData* pDevData = (struct _SDeviceData*)pDev->parent->driver_data;
 
-	return 0;
+	if(!pDevData)
+	{
+		dev_err(pDev, "Error occured while getting device data... \n");
+		return -EINVAL;
+	}
+	
+	return sprintf(buf, "%d\n", pDevData->_size);
 }
 
 ssize_t max_size_store(struct device* pDev, struct device_attribute* pDevAttr, const char* buf, size_t count)
 {
+	long result;
+	int ret;
+	struct _SDeviceData* pDevData = (struct _SDeviceData*)pDev->parent->driver_data;
+	
+	ret = kstrtol(buf, 10, &result);
+	if(ret < 0)
+	{
+		return ret;
+	}
+	pDevData->_size = result;	
 
-	return 0;
+	pDevData->_buf = krealloc(pDevData->_buf, result, GFP_KERNEL);
+
+	return count;
 }
 
 int get_data_from_dt(struct device* pDev)
@@ -147,7 +176,7 @@ int pdrv_probe(struct platform_device* pPlatDev)
 
 	cdev_add(&pDevData->_cdev, pDevData->_devNum, 1);
 
-	drvData._dev = device_create(drvData._class, NULL, pDevData->_devNum, NULL, "pcd-%d", drvData._totalDevices);
+	drvData._dev = device_create(drvData._class, pDev, pDevData->_devNum, NULL, "pcd-%d", drvData._totalDevices);
 	if(IS_ERR(drvData._dev))
 	{
 		dev_err(pDev, "device_create error \n");
