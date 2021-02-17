@@ -32,6 +32,7 @@ int pdrv_remove(struct platform_device*);
 typedef struct _SDeviceData
 {
 	char _label[20];
+	struct gpio_desc* _pGpioDesc;
 } SDeviceData;
 
 typedef struct _SDriverData

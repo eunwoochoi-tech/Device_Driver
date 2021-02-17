@@ -147,62 +147,50 @@ int get_data_from_dt(struct device* pDev)
 
 int pdrv_probe(struct platform_device* pPlatDev)
 {
-	/*
+	int i = 0;
 	int ret;
+	const char* name;
 	struct device* pDev = &pPlatDev->dev;
-	struct device_node* pDevNode = pDev->of_node;
-	
-	dev_info(pDev, "platform drvier probe start \n");
-	// if device is detected because of not DT
-	if(!pDevNode)
+	struct _SDeviceData* pDevData = NULL;
+	struct device_node* pDevNode = pPlatDev->dev.of_node;
+	struct device_node* child = NULL;
+
+	for_each_available_child_of_node(pDevNode->parent, child)
 	{
-		dev_err(pDev, "DT is not present \n");
-		return -EINVAL;
+		pDevData = devm_kzalloc(pDev, sizeof(struct _SDeviceData), GFP_KERNEL);
+		if(!pDevData)
+		{
+			dev_err(pDev, "devm_kzalloc failed \n");
+			return -ENOMEM;
+		}
+
+		ret = of_property_read_string(child, "label", &name);
+		if(ret)
+		{
+			dev_warn(pDev, "Missing label info \n");
+			snprintf(pDevData->_label, sizeof(pDevData->_label), "unkngpio%d", i);
+		}
+		else
+		{
+			strcpy(pDevData->_label, name);
+			dev_info(pDev, "GPIO _label is %s\n", pDevData->_label);
+		}
+
+		pDev->_pGpioDesc = devm_fwnode_get_gpiod_from_child(pDev, "bone", &child->fwnode, GPIOD_ASIS, pDevData->_label);
+		if(IS_ERR(pDev->_pGpioDesc))
+		{
+			devm_err("devm_fwnode_get_gpiod_from_child error \n");
+			ret = PTR_ERR(pDev->_pGpioDesc);
+			if(ret == -ENOENT)
+			{
+				dev_err(pDev, "NO GPIO has been assigned to the requested function or idx \n");
+			}
+			return ret;
+		}
+
+		i++;
 	}
 
-	dev_info(pDev, "DT is detected \n");
-
-	pDevData = devm_kzalloc(pDev, sizeof(SDeviceData), GFP_KERNEL);
-	if(!pDevData)
-	{
-		dev_err(pDev, "devm_kzalloc error \n");
-		return -ENOMEM;
-	}
-	pDev->driver_data = pDevData;
-
-	ret = get_data_from_dt(pDev);	
-	if(ret)
-	{
-		dev_err(pDev, "get_data_from_dt error \n");
-		return ret;
-	}
-
-	cdev_init(&pDevData->_cdev, &fOps);
-	pDevData->_cdev.owner = THIS_MODULE;
-
-	cdev_add(&pDevData->_cdev, pDevData->_devNum, 1);
-
-	drvData._dev = device_create(drvData._class, pDev, pDevData->_devNum, NULL, "pcd-%d", drvData._totalDevices);
-	if(IS_ERR(drvData._dev))
-	{
-		dev_err(pDev, "device_create error \n");
-		cdev_del(&pDevData->_cdev);
-		ret = PTR_ERR(drvData._dev);
-		return ret;
-	}
-
-	ret = sysfs_create_file(&drvData._dev->kobj, &dev_attr_max_size.attr);
-	if(ret < 0)
-	{
-		dev_err(pDev, "sysfs_create_file error \n");
-		device_destroy(drvData._class, pDevData->_devNum);
-		cdev_del(&pDevData->_cdev);
-	}
-
-	drvData._totalDevices++;
-
-	dev_info(pDev, "platform drvier probe end \n");
-	*/
 
 	return 0;
 }
