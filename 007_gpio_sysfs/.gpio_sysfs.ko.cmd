@@ -1,0 +1,1 @@
+cmd_/root/Device_Driver/007_gpio_sysfs/gpio_sysfs.ko := arm-linux-gnueabihf-ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /root/Device_Driver/007_gpio_sysfs/gpio_sysfs.ko /root/Device_Driver/007_gpio_sysfs/gpio_sysfs.o /root/Device_Driver/007_gpio_sysfs/gpio_sysfs.mod.o ;  true

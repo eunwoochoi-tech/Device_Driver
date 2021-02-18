@@ -24,6 +24,24 @@ struct platform_driver pDrv =
 	}
 };
 
+static DEVICE_ATTR_RW(direction);
+static DEVICE_ATTR_RW(value);
+static DEVICE_ATTR_RO(label);
+
+static struct attribute* pAttrs[] = {
+	&dev_attr_direction.attr,
+	&dev_attr_value.attr,
+	&dev_attr_label.attr
+};
+
+static struct attribute_group attrGroupp = {
+	.attrs = pAttrs
+};
+
+const struct attribute_group* pAttrGroup[] = {
+	&attrGroupp
+};
+
 SDriverData drvData;
 SDeviceData* pDevData;
 
@@ -83,6 +101,21 @@ ssize_t max_size_show(struct device* pDev, struct device_attribute* pDevAttr, ch
 	return 0;
 }
 
+ssize_t direction_show(struct device* pDev, struct device_attribute* pDevAttr, char* buf)
+{
+	return 0;
+}
+
+ssize_t value_show(struct device* pDev, struct device_attribute* pDevAttr, char* buf)
+{
+	return 0;
+}
+
+ssize_t label_show(struct device* pDev, struct device_attribute* pDevAttr, char* buf)
+{
+	return 0;
+}
+
 ssize_t max_size_store(struct device* pDev, struct device_attribute* pDevAttr, const char* buf, size_t count)
 {
 	/*
@@ -101,6 +134,16 @@ ssize_t max_size_store(struct device* pDev, struct device_attribute* pDevAttr, c
 	*/
 	return 0;
 	// return count;
+}
+
+ssize_t direction_store(struct device* pDev, struct device_attribute* pDevAttr, const char* buf, size_t count)
+{
+	return 0;
+}
+
+ssize_t value_store(struct device* pDev, struct device_attribute* pDevAttr, const char* buf, size_t count)
+{
+	return 0;
 }
 
 int get_data_from_dt(struct device* pDev)
@@ -151,6 +194,7 @@ int pdrv_probe(struct platform_device* pPlatDev)
 	int ret;
 	const char* name;
 	struct device* pDev = &pPlatDev->dev;
+	struct device* pDevSysfs;
 	struct _SDeviceData* pDevData = NULL;
 	struct device_node* pDevNode = pPlatDev->dev.of_node;
 	struct device_node* child = NULL;
@@ -196,6 +240,14 @@ int pdrv_probe(struct platform_device* pPlatDev)
 			dev_err(pDev, "gpiod_direction_output error \n");
 			return ret;
 		}
+
+		pDevSysfs = device_create_with_groups(drvData._pClass, pDev, 0, pDevData, pAttrGroup, "gpio-%s", pDevData->_label);
+		if(IS_ERR(pDevSysfs))
+		{
+			dev_info(pDev, "device_create_with_groups error \n");
+			return PTR_ERR(ret);
+		}
+		
 
 		i++;
 	}
