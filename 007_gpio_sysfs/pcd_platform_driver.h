@@ -12,6 +12,7 @@
 #include <linux/mod_devicetable.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
+#include <linux/gpio/consumer.h>
 
 #define NUM_OF_DEV	4
 #define RDONLY		0x01

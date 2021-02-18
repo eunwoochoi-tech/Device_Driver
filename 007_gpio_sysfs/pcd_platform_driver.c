@@ -176,15 +176,24 @@ int pdrv_probe(struct platform_device* pPlatDev)
 			dev_info(pDev, "GPIO _label is %s\n", pDevData->_label);
 		}
 
-		pDev->_pGpioDesc = devm_fwnode_get_gpiod_from_child(pDev, "bone", &child->fwnode, GPIOD_ASIS, pDevData->_label);
-		if(IS_ERR(pDev->_pGpioDesc))
+		pDevData->_pGpioDesc = devm_fwnode_get_gpiod_from_child(pDev, "bone", &child->fwnode, GPIOD_ASIS, pDevData->_label);
+
+		if(IS_ERR(pDevData->_pGpioDesc))
 		{
-			devm_err("devm_fwnode_get_gpiod_from_child error \n");
-			ret = PTR_ERR(pDev->_pGpioDesc);
+			dev_err(pDev, "devm_fwnode_get_gpiod_from_child error \n");
+			ret = PTR_ERR(pDevData->_pGpioDesc);
 			if(ret == -ENOENT)
 			{
 				dev_err(pDev, "NO GPIO has been assigned to the requested function or idx \n");
 			}
+			return ret;
+		}
+
+		/* set the gpio direction to output */
+		ret = gpiod_direction_output(pDevData->_pGpioDesc, 0); 
+		if(ret)
+		{
+			dev_err(pDev, "gpiod_direction_output error \n");
 			return ret;
 		}
 
