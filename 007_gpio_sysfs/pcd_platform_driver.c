@@ -103,17 +103,39 @@ ssize_t max_size_show(struct device* pDev, struct device_attribute* pDevAttr, ch
 
 ssize_t direction_show(struct device* pDev, struct device_attribute* pDevAttr, char* buf)
 {
-	return 0;
+	struct _SDeviceData* pDevData = pDev->driver_data;
+	int direction;
+	char* arrDirection;
+
+	direction = gpiod_get_direction(pDevData->_pGpioDesc);
+	if(direction < 0)
+	{
+		dev_err(pDev, "gpiod_get_direction erorr \n");
+		return direction;
+	}
+
+	// if dir == 0, then show "out, if dir == 1, then show "in" */
+
+	arrDirection = (direction == 0) ? "out" : "in";
+
+	return sprintf(buf, "%s\n", arrDirection);
 }
 
 ssize_t value_show(struct device* pDev, struct device_attribute* pDevAttr, char* buf)
 {
-	return 0;
+	int value;
+	struct _SDeviceData* pDevData = pDev->driver_data;
+
+	value = gpiod_get_value(pDevData->_pGpioDesc);
+
+	return sprintf(buf, "%d\n", value);
 }
 
 ssize_t label_show(struct device* pDev, struct device_attribute* pDevAttr, char* buf)
 {
-	return 0;
+	struct _SDeviceData* pDevData = pDev->driver_data;
+
+	return sprintf(buf, "%s\n", pDevData->_label);
 }
 
 ssize_t max_size_store(struct device* pDev, struct device_attribute* pDevAttr, const char* buf, size_t count)
@@ -138,12 +160,41 @@ ssize_t max_size_store(struct device* pDev, struct device_attribute* pDevAttr, c
 
 ssize_t direction_store(struct device* pDev, struct device_attribute* pDevAttr, const char* buf, size_t count)
 {
-	return 0;
+	struct _SDeviceData* pDevData = pDev->driver_data;
+	int ret;
+
+	if(sysfs_streq(buf, "in"))
+	{
+		ret = gpiod_direction_input(pDevData->_pGpioDesc);
+	}
+	else if(sysfs_streq(buf, "out"))
+	{
+		ret = gpiod_direction_output(pDevData->_pGpioDesc, 0);
+	}
+	else
+	{
+		ret = -EINVAL;
+	}
+
+	return ret ? ret : count;
 }
 
 ssize_t value_store(struct device* pDev, struct device_attribute* pDevAttr, const char* buf, size_t count)
 {
-	return 0;
+	struct _SDeviceData* pDevData = pDev->driver_data;
+	int ret;
+	long value;
+
+	ret = kstrtol(buf, 0, &value);
+	if(ret)
+	{
+		dev_err(pDev, "kstrtol error \n");
+		return ret;
+	}
+
+	gpiod_set_value(pDevData->_pGpioDesc, value);
+
+	return count;
 }
 
 int get_data_from_dt(struct device* pDev)
@@ -198,6 +249,21 @@ int pdrv_probe(struct platform_device* pPlatDev)
 	struct _SDeviceData* pDevData = NULL;
 	struct device_node* pDevNode = pPlatDev->dev.of_node;
 	struct device_node* child = NULL;
+	
+	drvData._totalDevices = of_get_child_count(pDevNode);
+	if(!drvData._totalDevices)
+	{
+		dev_err(pDev, "No Devices found \n");
+		return -EINVAL;
+	}
+
+	drvData._ppDev = devm_kzalloc(pDev, sizeof(struct device*) * drvData._totalDevices, GFP_KERNEL);
+	if(IS_ERR(drvData._ppDev))
+	{
+		dev_err(pDev, "devm_kzallic error \n");
+		ret = PTR_ERR(*drvData._ppDev);
+		return ret;
+	}
 
 	for_each_available_child_of_node(pDevNode->parent, child)
 	{
@@ -241,13 +307,14 @@ int pdrv_probe(struct platform_device* pPlatDev)
 			return ret;
 		}
 
-		pDevSysfs = device_create_with_groups(drvData._pClass, pDev, 0, pDevData, pAttrGroup, "gpio-%s", pDevData->_label);
-		if(IS_ERR(pDevSysfs))
-		{
-			dev_info(pDev, "device_create_with_groups error \n");
-			return PTR_ERR(ret);
-		}
+		drvData._ppDev[i] = device_create_with_groups(drvData._pClass, pDev, 0, pDevData, pAttrGroup, "gpio-%s", pDevData->_label);
 		
+		if(IS_ERR(drvData._ppDev[i]))
+		{
+			dev_err(pDev, "device_create_with_groups error \n");
+			ret = PTR_ERR(drvData._ppDev[i]);
+			return ret;
+		}
 
 		i++;
 	}
@@ -258,20 +325,13 @@ int pdrv_probe(struct platform_device* pPlatDev)
 
 int pdrv_remove(struct platform_device* pPlatDev)
 {
-	/*
-	struct device* pDev = &pPlatDev->dev;
-	struct _SDeviceData* pDevData = (struct _SDeviceData*)pDev->driver_data;
+	int i;
 
-	dev_info(pDev, "platform driver remove start \n");
+	for(i = 0; i < drvData._totalDevices; i++)
+	{
+		device_unregister(drvData._ppDev[i]);
+	}
 
-	device_destroy(drvData._class, pDevData->_devNum);
-
-	cdev_del(&pDevData->_cdev);
-	
-	drvData._totalDevices--;
-
-	dev_info(pDev, "platform driver remove end \n");
-	*/
 	return 0;
 }
 

@@ -45,6 +45,7 @@ typedef struct _SDriverData
 {
 	int _totalDevices;
 	struct class* _pClass;
+	struct device** _ppDev;
 } SDriverData;
 #endif
 
