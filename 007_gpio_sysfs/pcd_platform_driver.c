@@ -27,11 +27,13 @@ struct platform_driver pDrv =
 static DEVICE_ATTR_RW(direction);
 static DEVICE_ATTR_RW(value);
 static DEVICE_ATTR_RO(label);
+static DEVICE_ATTR(max_size, S_IWUSR | S_IRUGO, max_size_show, max_size_store);
 
 static struct attribute* pAttrs[] = {
 	&dev_attr_direction.attr,
 	&dev_attr_value.attr,
-	&dev_attr_label.attr
+	&dev_attr_label.attr,
+	NULL
 };
 
 static struct attribute_group attrGroupp = {
@@ -39,13 +41,13 @@ static struct attribute_group attrGroupp = {
 };
 
 const struct attribute_group* pAttrGroup[] = {
-	&attrGroupp
+	&attrGroupp,
+	NULL
 };
 
 SDriverData drvData;
 SDeviceData* pDevData;
 
-DEVICE_ATTR(max_size, S_IWUSR | S_IRUGO, max_size_show, max_size_store);
 struct attribute* pArrAttr[] =
 {
 	&dev_attr_max_size.attr
@@ -245,12 +247,13 @@ int pdrv_probe(struct platform_device* pPlatDev)
 	int ret;
 	const char* name;
 	struct device* pDev = &pPlatDev->dev;
-	struct device* pDevSysfs;
 	struct _SDeviceData* pDevData = NULL;
 	struct device_node* pDevNode = pPlatDev->dev.of_node;
 	struct device_node* child = NULL;
 	
 	drvData._totalDevices = of_get_child_count(pDevNode);
+	dev_info(pDev, "Total Devices : %d \n", drvData._totalDevices);
+
 	if(!drvData._totalDevices)
 	{
 		dev_err(pDev, "No Devices found \n");
@@ -265,7 +268,7 @@ int pdrv_probe(struct platform_device* pPlatDev)
 		return ret;
 	}
 
-	for_each_available_child_of_node(pDevNode->parent, child)
+	for_each_available_child_of_node(pDevNode, child)
 	{
 		pDevData = devm_kzalloc(pDev, sizeof(struct _SDeviceData), GFP_KERNEL);
 		if(!pDevData)
@@ -286,7 +289,9 @@ int pdrv_probe(struct platform_device* pPlatDev)
 			dev_info(pDev, "GPIO _label is %s\n", pDevData->_label);
 		}
 
+		dev_info(pDev, "devm_fwnode_get_gpiod_from_child start");
 		pDevData->_pGpioDesc = devm_fwnode_get_gpiod_from_child(pDev, "bone", &child->fwnode, GPIOD_ASIS, pDevData->_label);
+		dev_info(pDev, "devm_fwnode_get_gpiod_from_child end");
 
 		if(IS_ERR(pDevData->_pGpioDesc))
 		{
@@ -299,6 +304,7 @@ int pdrv_probe(struct platform_device* pPlatDev)
 			return ret;
 		}
 
+		dev_info(pDev, "gpiod_direction_output start \n");
 		/* set the gpio direction to output */
 		ret = gpiod_direction_output(pDevData->_pGpioDesc, 0); 
 		if(ret)
@@ -306,8 +312,9 @@ int pdrv_probe(struct platform_device* pPlatDev)
 			dev_err(pDev, "gpiod_direction_output error \n");
 			return ret;
 		}
+		dev_info(pDev, "gpiod_direction_output end \n");
 
-		drvData._ppDev[i] = device_create_with_groups(drvData._pClass, pDev, 0, pDevData, pAttrGroup, "gpio-%s", pDevData->_label);
+		drvData._ppDev[i] = device_create_with_groups(drvData._pClass, pDev, 0, pDevData, pAttrGroup, pDevData->_label);
 		
 		if(IS_ERR(drvData._ppDev[i]))
 		{
