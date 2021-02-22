@@ -1,0 +1,21 @@
+/ {
+	gpio-devs {
+		compatible="org,bone-gpio-sysfs";
+		gpio0 {
+			label = "gpio2_2";
+			bone-gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
+		};
+		gpio1 {
+			label = "gpio2.3";
+			bone-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+		};
+		gpio2 {
+			label = "gpio2.4";
+			bone-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
+		};
+		gpio3 {
+			label = "gpio2.5";
+			bone-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
