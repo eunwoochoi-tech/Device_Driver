@@ -4,8 +4,6 @@ struct of_device_id ofDevId[] = {
 	{ .compatible = "org,bone-gpio-sysfs" }
 };
 
-struct _SDriverData drvData;
-
 struct platform_driver platDrv = {
 	.probe = platDrv_probe,
 	.remove = platDrv_remove,
@@ -15,9 +13,10 @@ struct platform_driver platDrv = {
 	}
 };
 
+struct _SDriverData drvData;
+
 static int __init gpio_sysfs_init(void)
 {
-	// create class under /sys/class
 	drvData._class = class_create(THIS_MODULE, "sysfs_gpios");
 	if(IS_ERR(drvData._class))
 	{
@@ -25,7 +24,7 @@ static int __init gpio_sysfs_init(void)
 	}
 
 	platform_driver_register(&platDrv);
-
+	return 0;
 }
 
 static void __exit gpio_sysfs_exit(void)

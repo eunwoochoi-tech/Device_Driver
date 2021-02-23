@@ -4,7 +4,8 @@ OBJS = gpio_sysfs.o gpio_main.o
 obj-m := $(TARGET_OBJ)
 $(basename $(TARGET_OBJ))-objs = $(OBJS)
 
-KPATH=/root/kernel_source/BBB-linux
+#KPATH=/root/kernel_source/BBB-linux
+KPATH=/root/kernel_module/BBB_Linux_5.4
 ARCH=arm
 CROSS_COMPILE=arm-linux-gnueabihf-
 

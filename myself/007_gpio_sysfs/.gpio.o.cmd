@@ -1,1 +1,0 @@
-cmd_/root/Device_Driver/myself/007_gpio_sysfs/gpio.o := arm-linux-gnueabihf-ld -EL    -r -o /root/Device_Driver/myself/007_gpio_sysfs/gpio.o /root/Device_Driver/myself/007_gpio_sysfs/gpio_sysfs.o /root/Device_Driver/myself/007_gpio_sysfs/gpio_main.o 
