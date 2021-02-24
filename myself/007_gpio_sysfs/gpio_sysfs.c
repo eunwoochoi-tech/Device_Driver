@@ -75,6 +75,8 @@ int platDrv_probe(struct platform_device* pPlatDev)
 			ret = PTR_ERR(pDevChild);
 			return ret;
 		}
+
+		i++;
 	}
 
 }

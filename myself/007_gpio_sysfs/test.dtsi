@@ -1,42 +1,42 @@
 / {
-	lcd-16-2 {
+	bone_gpios {
 		compatible = "org,lcd-i2c";
 		pinctrl-names = "default";
-		pinctrl-0 = <&lcd_16>;
+		pinctrl-0 = <&lcd_i2c>;
 
 		rs {
-			label = "gpio2.6 rs";
+			label = "rs gpio2.6";
 			bone-gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
 		};
 		rw {
-			label = "gpio2.7 rw";
+			label = "rs gpio2.7";
 			bone-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
 		};
 		e {
-			label = "gpio2.8 e";
+			label = "rs gpio2.8";
 			bone-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
 		};
 		db0 {
-			label = "gpio2.9 db0";
+			label = "rs gpio2.9";
 			bone-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
 		};
 		db1 {
-			label = "gpio2.10 db1";
+			label = "rs gpio2.10";
 			bone-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;
 		};
 		db2 {
-			label = "gpio2.11 db11";
+			label = "rs gpio2.11";
 			bone-gpios = <&gpio2 11 GPIO_ACTIVE_HIGH>;
 		};
 		db3 {
-			label = "gpio2.12 db12";
+			label = "rs gpio2.12";
 			bone-gpios = <&gpio2 12 GPIO_ACTIVE_HIGH>;
 		};
 	};
 };
 
-&am33xx_pinmux {
-	lcd_16: lcdi2c {
+&am33xx_pinctrl {
+	lcd_i2c: lcd_i2c_16_2 {
 		pinctrl-single,pins = <
 			AM33XX_PADCONF(AM335X_PIN_LCD_DATA0, PIN_OUTPUT, MUX_MODE7)
 			AM33XX_PADCONF(AM335X_PIN_LCD_DATA1, PIN_OUTPUT, MUX_MODE7)
