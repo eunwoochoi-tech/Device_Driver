@@ -1,7 +1,8 @@
 #include "gpio_sysfs.h"
 
 struct of_device_id ofDevId[] = {
-	{ .compatible = "org,bone-gpio-sysfs" }
+	{ .compatible = "org,bone-gpio-sysfs" },
+	{ .compatible = "org,lcd-i2c" }
 };
 
 struct platform_driver platDrv = {
@@ -34,3 +35,7 @@ static void __exit gpio_sysfs_exit(void)
 
 module_init(gpio_sysfs_init);
 module_exit(gpio_sysfs_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("EUNWOO");
+MODULE_DESCRIPTION("LCD test");
