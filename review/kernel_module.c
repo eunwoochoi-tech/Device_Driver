@@ -2,6 +2,7 @@
 
 static int __init kernel_module_init(void)
 {
+	int arr[10];
 	pr_info("init function \n");
 	return 0;
 }
