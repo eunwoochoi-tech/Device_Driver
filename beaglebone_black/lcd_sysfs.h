@@ -16,6 +16,11 @@
 
 int platDrvProbe(struct platform_device *);
 int platDrvRemove(struct platform_device *);
+ssize_t direction_show(struct device *dev, struct device_attribute *attr, char *buf);
+ssize_t direction_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count);
+ssize_t value_show(struct device *dev, struct device_attribute *attr, char *buf);
+ssize_t value_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count);
+ssize_t label_show(struct device *dev, struct device_attribute *attr, char *buf);
 
 struct _SLcdDrvData {
 	int _totalDevices;

@@ -1,0 +1,50 @@
+/ {
+	lcd_16x2 {
+		compatible = "lcd_16x2_pins";
+		pinctrl-names = "default";
+		pinctrl-0 = <&lcd_i2c>;
+
+		rs {
+			label = "rs gpio2_6";
+			lcd-gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
+		};
+		rw {
+			label = "rs gpio2_7";
+			lcd-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
+		};
+		e {
+			label = "rs gpio2_8";
+			lcd-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+		};
+		data0 {
+			label = "rs gpio2_9";
+			lcd-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+		};
+		data1 {
+			label = "rs gpio2_10";
+			lcd-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;
+		};
+		data2 {
+			label = "rs gpio2_11";
+			lcd-gpios = <&gpio2 11 GPIO_ACTIVE_HIGH>;
+		};
+		data3 {
+			label = "rs gpio2_12";
+			lcd-gpios = <&gpio2 12 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&am33xx_pinmux{
+	lcd_i2c: lcd_i2c_16_2 {
+		pinctrl-single,pins = <
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA0, PIN_OUTPUT, MUX_MODE7);
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA1, PIN_OUTPUT, MUX_MODE7);
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA2, PIN_OUTPUT, MUX_MODE7);
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA3, PIN_OUTPUT, MUX_MODE7);
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA4, PIN_OUTPUT, MUX_MODE7);
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA5, PIN_OUTPUT, MUX_MODE7);
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA6, PIN_OUTPUT, MUX_MODE7);
+		>;
+	};
+};

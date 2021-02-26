@@ -30,6 +30,8 @@ static int __init lcd_sysfs_init(void)
 	platform_driver_register(&platDrv);
 
 	pr_info("lcd_sysfs_init end \n");
+
+	return 0;
 }
 
 static void __exit lcd_sysfs_exit(void)

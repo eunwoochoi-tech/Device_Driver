@@ -1,12 +1,29 @@
 #include "lcd_sysfs.h"
 
-DEVICE_ATTR(
+static DEVICE_ATTR_RW(direction);
+static DEVICE_ATTR_RW(value);
+static DEVICE_ATTR_RO(label);
+
+static struct attribute* attrs[] = {
+	&dev_attr_direction.attr,
+	&dev_attr_value.attr,
+	&dev_attr_label.attr
+};
+
+static struct attribute_group attrGroup = {
+	.attrs = attrs
+};
+
+static const struct attribute_group* pAttrGroups[] = {
+	&attrGroup
+};
 
 extern struct _SLcdDrvData lcdDrvData;
 struct _SLcdDevData* pLcdDevData;
 
 int platDrvProbe(struct platform_device* pPlatDev)
 {
+	int i = 0;
 	int ret;
 	struct device* pDev = &pPlatDev->dev;
 	struct device* pChildDev = NULL;
@@ -73,12 +90,14 @@ int platDrvProbe(struct platform_device* pPlatDev)
 			return ret;
 		}
 	
-		pChildDev = device_create_with_groups(&lcdDrvData._class, parent, 0, NULL, attribute_group, fmt, ...);
-		if(!pChildDev)
+		lcdDrvData._ppDev[i] = device_create_with_groups(lcdDrvData._class, pDev, 0, pLcdDevData, pAttrGroups, "attr-%d", i);
+		if(IS_ERR(pChildDev))
 		{
 			dev_err(pDev, "device_create_with_groups error \n");
 			return PTR_ERR(pChildDev);
 		}
+
+		i++;
 	}
 	
 	dev_info(pDev, "platform Driver Probe end \n");
@@ -87,5 +106,45 @@ int platDrvProbe(struct platform_device* pPlatDev)
 
 int platDrvRemove(struct platform_device* pPlatDev)
 {
+	int i;
+
+	for(i = 0; i < lcdDrvData._totalDevices; i++)
+	{
+		device_unregister(lcdDrvData._ppDev[i]);
+	}
+	class_destroy(lcdDrvData._class);
+	
+}
+
+ssize_t direction_show(struct device* dev, struct device_attribute* attr, char* buf)
+{
+	dev_info(dev, "direction_show");
+	return 0;
+}
+
+ssize_t direction_store(struct device* dev, struct device_attribute* attr, const char* buf, size_t count)
+{
+	dev_info(dev, "direction_store");
+	return 0;
 
 }
+
+ssize_t value_show(struct device* dev, struct device_attribute* attr, char* buf)
+{
+	dev_info(dev, "value_show");
+	return 0;
+
+}
+
+ssize_t value_store(struct device* dev, struct device_attribute* attr, const char* buf, size_t count)
+{
+	dev_info(dev, "value_store");
+	return 0;
+}
+
+ssize_t label_show(struct device* dev, struct device_attribute* attr, char* buf)
+{
+	dev_info(dev, "label_show \n");
+	return 0;
+}
+
