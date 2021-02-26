@@ -15,7 +15,7 @@
 
 ## 005_pcd_platform_driver_dt
  - 2021-02-16 Finished
- - 
+ 
 ##006_pcd_sysfs
  - 2021-02-22 Finished
  
