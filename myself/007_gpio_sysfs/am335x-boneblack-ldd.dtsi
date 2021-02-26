@@ -1,7 +1,7 @@
 / {
 	bone_gpio_devs {
 		compatible="org,bone-gpio-sysfs";
-		pinctrl-single,names = "default";
+		pinctrl-names = "default";
 		pinctrl-0 = <&p8_gpios>;
 		gpio0 {
 			label = "gpio2_6";
