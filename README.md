@@ -16,8 +16,8 @@
 ## 005_pcd_platform_driver_dt
  - 2021-02-16 Finished
  
-##006_pcd_sysfs
+## 006_pcd_sysfs
  - 2021-02-22 Finished
  
-##007_gpio_sysfs
+## 007_gpio_sysfs
  - Linux의 device driver model 그리고 sysfs와 관련되서 완전히 이해하지 못함(2021-02-26)
