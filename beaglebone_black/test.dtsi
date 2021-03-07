@@ -1,0 +1,61 @@
+/ {
+	node1: root_node1 {
+		compatible = "node1";
+		child_node1_1: child {
+			compatible = "child-1";
+		};
+	};
+	node2: root_node2 {
+		compatible = "node2";
+		child_node2_1: child {
+			compatible = "child-1";
+		};
+
+	};
+	node3: root_node3 {
+		compatible = "node3";
+		child_node3_1: child_1 {
+			compatible = "child-1";
+		};
+		child_node3_2: child_2 {
+			compatible = "child-2";
+		};
+	};
+	node4: root_node4 {
+		compatible = "node4";
+		child_node4_1: child {
+			compatible = "child-1";
+		};
+	};
+	leds {
+		compatible = "custom_leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&led_pins>;
+		led1 {
+			label = "led1";
+			led-gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
+		};
+		led2 {
+			label = "led2";
+			bone-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
+		};
+		led3 {
+			label = "led3";
+			bone-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&am33xx_pinmux {
+	led_pins: custom_led_pins {
+		pinctrl-single,pins = <
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA0, PIN_OUTPUT, MUX_MODE7)
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA1, PIN_OUTPUT, MUX_MODE7)
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA2, PIN_OUTPUT, MUX_MODE7)
+		>;
+	};
+};
+
+&tda19988 {
+	status = "disabled";
+};
