@@ -1,7 +1,7 @@
 #include "test_driver.h"
 
-struct of_device_id of_test_table = {
-	.compatible = "custom_leds"
+struct of_device_id of_test_table[] = {
+	{ .compatible = "test-leds" }
 };
 
 struct platform_driver platDrv = {
@@ -9,7 +9,7 @@ struct platform_driver platDrv = {
 	.remove = platDrv_remove,
 	.driver = {
 		.name = "test_driver",
-		.of_match_table = &of_test_table
+		.of_match_table = of_test_table
 	}
 };
 
@@ -36,11 +36,13 @@ static void __exit test_exit(void)
 
 int platDrv_probe(struct platform_device* pPlatDev)
 {
+	int i = 0;
 	int ret = 0;
 	int childCount = 0;
 	const char* label = NULL;
-	struct device_node* child = NULL;
 	struct device* pDev = &pPlatDev->dev;
+	struct device_node* parent = pDev->of_node;
+	struct device_node* child = NULL;
 	struct gpio_desc* pGpioDesc = NULL;
 
 	dev_info(pDev, "platDrv_probe start \n");
@@ -55,13 +57,14 @@ int platDrv_probe(struct platform_device* pPlatDev)
 	else
 	{
 		dev_info(pDev, "%d child nodes detected \n", childCount);
-		for_each_available_child_of_node(pDev->of_node, child)
+		for_each_available_child_of_node(parent, child)
 		{
 			of_property_read_string(child, "label", &label);
+			dev_info(pDev, "%d's info \n", i++);
 			dev_info(pDev, "name : %s \n", child->name);
 			dev_info(pDev, "label: %s \n", label);
 			
-			pGpioDesc = devm_fwnode_get_gpiod_from_child(pDev, "bone", &child->fwnode, GPIOD_ASIS, label);
+			pGpioDesc = devm_fwnode_get_gpiod_from_child(pDev, "led", &child->fwnode, GPIOD_ASIS, label);
 			dev_info(pDev, "devm_fwnode_get_gpiod_from_child done \n");
 			if(IS_ERR(pGpioDesc))
 			{
