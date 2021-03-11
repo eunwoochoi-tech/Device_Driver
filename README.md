@@ -23,4 +23,4 @@
  - Linux의 device driver model 그리고 sysfs와 관련되서 완전히 이해하지 못함(2021-02-26)
  - 2021-03-02 Finished
 
-# 처음부터 복습 및 총 정리하기
+# 처음부터 복습 및 총 정리하기(interrupt, pwm etc..)
