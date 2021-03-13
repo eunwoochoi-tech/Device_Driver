@@ -1,17 +1,54 @@
 / {
-	test_led: leds {
-	compatible = "test-leds";
-		led1 {
-			label = "led1-label";
-			led-gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
+	custom_lcd: lcd {
+		compatible = "custom_lcd";
+		pinctrl-names = "default";
+		pinctrl-0 = <&lcd_pins>;
+		lcd1 {
+			label = "lcd1";
+			lcd-gpios = <&gpio2 12 GPIO_ACTIVE_HIGH>;
 		};
-		led2 {
-			label = "led2-label";
-			led-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+		lcd2 {
+			label = "lcd2";
+			lcd-gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
 		};
-		led3 {
-			label = "led3-label";
-			led-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
+		lcd3 {
+			label = "lcd3";
+			lcd-gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;
+		};
+		lcd4 {
+			label = "lcd4";
+			lcd-gpios = <&gpio2 11 GPIO_ACTIVE_HIGH>;
+		};
+		lcd5 {
+			label = "lcd5";
+			lcd-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+		};
+		lcd6 {
+			label = "lcd6";
+			lcd-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
+		};
+		lcd7 {
+			label = "lcd7";
+			lcd-gpios = <&gpio2 7 GPIO_ACTIVE_HIGH>;
 		};
 	};
+
+};
+
+&am33xx_pinmux {
+	lcd_pins: lcd {
+		pinctrl-single,pins = <
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA1, PIN_OUTPUT, MUX_MODE7)
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA2, PIN_OUTPUT, MUX_MODE7)
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA3, PIN_OUTPUT, MUX_MODE7)
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA4, PIN_OUTPUT, MUX_MODE7)
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA5, PIN_OUTPUT, MUX_MODE7)
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA6, PIN_OUTPUT, MUX_MODE7)
+			AM33XX_PADCONF(AM335X_PIN_LCD_DATA7, PIN_OUTPUT, MUX_MODE7)
+		>;
+	};
+};
+
+&tda19988 {
+	status = "disabled";
 };

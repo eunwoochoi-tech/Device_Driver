@@ -1,7 +1,0 @@
-/ {
-
-	BUTTON1: button {
-		compatible = "button1";
-	};
-
-}
