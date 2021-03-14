@@ -1,52 +1,15 @@
-/*
- ============================================================================
- Name        : gpio.c
- Version     : 1.0
- Copyright   : Your copyright notice
- Description : simple gpio file handling functions 
- 
- ============================================================================
- */
- 
-#include<linux/gpio/consumer.h>
-#include <linux/device.h>
+#include "common.h"
 
-#include "gpio.h"
-
-#include "lcd_platform_driver.h"
-
-extern struct lcd_private_data* get_lcd_private_data(void);
-
-/*
- *  GPIO configure direction
- *  dir_value : 1 means 'out' , 0 means "in"
- */
-int gpio_configure_dir(u8 desc_id , u8 dir_value, struct device *dev)
+void gpio_configure_direction(GPIO_IDX idx, int direction, struct device* pDev)
 {
-	int status;
+	struct _SLcdPrivateData* privateData = dev_get_drvdata(pDev);
 
-
-	struct lcd_private_data *lcd_data = dev_get_drvdata(dev);
-
-	if (dir_value)
-		status = gpiod_direction_output(lcd_data->desc[desc_id],0);
-	else
-		status = gpiod_direction_input(lcd_data->desc[desc_id]);
-	
-	return status;
-    
-
+	gpiod_direction_output(privateData->_ppGpioDesc[idx], OUTPUT);
 }
 
-/*
- *  GPIO write value
- *  out_value : can be either 0 or 1
- */
-int gpio_write_value(u8 desc_id, u8 out_value,struct device *dev)
+void gpio_write_value(GPIO_IDX idx, int value, struct device* pDev)
 {
-	struct lcd_private_data *lcd_data = dev_get_drvdata(dev);
+	struct _SLcdPrivateData* privateData = dev_get_drvdata(pDev);
 
-        gpiod_set_value(lcd_data->desc[desc_id],out_value);
-	return 0;
+	gpiod_set_value(privateData->_ppGpioDesc[idx], value);
 }
-
