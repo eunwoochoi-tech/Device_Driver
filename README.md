@@ -1,26 +1,24 @@
 # Device Driver
 
-## 001_hello_world
- - 2021-01-25 Finished
- 
-## 002_pseudo_char_driver
- - 2021-01-27 Finished
- 
-## 003_pseudo_char_driver_multiple
- - 2021-01-30 Finished
- 
-## 004_pcd_platform_driver
-   ### Platform device, Platform driver, Device Driver, Device 의 차이점 구분하기
- - 2021-02-08 Finished
+## 7 Segment Device Driver with sysfs attribute
+### 구성파일
+ 1. main.c
+- Device Driver 핵심 코드 저장
+ 2. gpio.c
+- gpio관련 설정 함수 저장
 
-## 005_pcd_platform_driver_dt
- - 2021-02-16 Finished
- 
-## 006_pcd_sysfs
- - 2021-02-22 Finished
- 
-## 007_gpio_sysfs
- - Linux의 device driver model 그리고 sysfs와 관련되서 완전히 이해하지 못함(2021-02-26)
- - 2021-03-02 Finished
+### 동작방식
+  1. /sys/class 하위에 "7segment" 클래스 생성
+  2. platform_driver 등록 및 probe함수 호출
+  3. gpio_desc를 이용한 gpio direction설정
+  4. /sys/class/7segment/ 에 "7segment_attr" 속성 및 "number" 속성파일 생성
+  5. 0을 출력하고 종료
 
-# 처음부터 복습 및 총 정리하기(interrupt, pwm etc..)
+### 사용법
+ 1. echo "number" > /sys/class/7segment/7segment-attrs/number
+ 2. cat /sys/class/7segment/7segment-attrs/number
+<img width="608" alt="sysfs" src="https://user-images.githubusercontent.com/50316116/111625751-8ff5f200-8830-11eb-8510-064ddc37aab4.png">
+
+
+
+### 001 ~ 007 및 beaglebone black은 공부기록 또는 미완성 프로젝트 입니다
