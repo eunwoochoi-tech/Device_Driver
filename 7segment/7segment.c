@@ -29,6 +29,15 @@ struct platform_driver platDriver = {
 	}
 };
 
+struct file_operations f_ops = {
+	.owner = THIS_MODULE,
+	.open = seg_open,
+	.read = seg_read,
+	.write = seg_write,
+	.llseek = seg_llseek,
+	.release = seg_release
+};
+
 struct attribute* ppAttrs[] = {
 	&dev_attr_number.attr,
 	NULL
@@ -45,19 +54,47 @@ const struct attribute_group* pAttrGroup[] = {
 
 static int __init segment_init(void)
 {
+	int ret;
+
 	pr_info("segment init start \n");
+
+	ret = alloc_chrdev_region(&driver._devNum, 0, 1, "segment");
+	if(ret)
+	{
+		pr_err("alloc_chrdev_region error \n");
+		goto exit;
+	}
+
+	cdev_init(&driver._cdev, &f_ops);
+	driver._cdev.owner = THIS_MODULE;
+
+	ret = cdev_add(&driver._cdev, driver._devNum, 1);
+	if(ret)
+	{
+		goto unreg_chrdev;
+	}
 
 	driver._pClass = class_create(THIS_MODULE, "7segment");
 	if(IS_ERR(driver._pClass))
 	{
 		pr_info("class_create error \n");
-		return PTR_ERR(driver._pClass);
+		ret = PTR_ERR(driver._pClass);
+		goto del_cdev;
 	}
 
 	platform_driver_register(&platDriver);
 
 	pr_info("segment init exit \n");
 	return 0;
+
+del_cdev:
+	cdev_del(&driver._cdev);
+
+unreg_chrdev:
+	unregister_chrdev_region(driver._devNum, 1);
+
+exit:
+	return ret;
 }
 
 static void __exit segment_exit(void)
@@ -65,7 +102,12 @@ static void __exit segment_exit(void)
 	pr_info("segment exit start \n");
 
 	platform_driver_unregister(&platDriver);
+
 	class_destroy(driver._pClass);
+
+	cdev_del(&driver._cdev);
+
+	unregister_chrdev_region(driver._devNum, 1);
 
 	pr_info("segment exit exit \n");
 }
@@ -186,11 +228,41 @@ int create_device_attrs(struct device* pDev, const struct attribute_group** ppAt
 {
 	struct _SDeviceDriver* pDriver = dev_get_drvdata(pDev);
 
-	pDriver->_pDevice = device_create_with_groups(pDriver->_pClass, pDev, 0, pDriver, ppAttrGroups, "7segment_attrs");
+	pDriver->_pDevice = device_create_with_groups(pDriver->_pClass, pDev, driver._devNum, pDriver, ppAttrGroups, "7segment_attrs");
 	if(IS_ERR(pDriver->_pDevice))
 	{
 		return PTR_ERR(pDriver->_pDevice);
 	}
+
+	return 0;
+}
+
+loff_t seg_llseek(struct file* pFile, loff_t offset, int count)
+{
+
+	return 0;
+}
+
+ssize_t seg_read(struct file* pFile, char __user* buf, size_t count, loff_t* offset)
+{
+
+	return 0;
+}
+
+ssize_t seg_write(struct file* pFile, const char __user* buf, size_t count, loff_t* offset)
+{
+
+	return 0;
+}
+
+int seg_open(struct inode* pInode, struct file* pFile)
+{
+
+	return 0;
+}
+
+int seg_release(struct inode* pInode, struct file* pFile)
+{
 
 	return 0;
 }

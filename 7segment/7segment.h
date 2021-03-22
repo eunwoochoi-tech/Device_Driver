@@ -33,6 +33,8 @@ enum { A, B, C, D, E, F, G };
 
 struct _SDeviceDriver {
 	int _num;
+	dev_t _devNum;
+	struct cdev _cdev;
 	struct class* _pClass;
 	struct device* _pDevice;
 	struct gpio_desc* _pGpioDesc[NUM_OF_PINS];
@@ -40,9 +42,15 @@ struct _SDeviceDriver {
 
 int platProbe(struct platform_device*);
 int platRemove(struct platform_device*);
-extern int gpio_configure_dir(struct gpio_desc*, int mode, int value);
+extern int gpio_configure_dir(struct gpio_desc*, int, int);
 int create_device_attrs(struct device*, const struct attribute_group**);
-int write_segment(struct device*, long num);
+int write_segment(struct device*, long);
+
+loff_t seg_llseek(struct file *, loff_t, int);
+ssize_t seg_read(struct file *, char __user *, size_t, loff_t *);
+ssize_t seg_write(struct file *, const char __user *, size_t, loff_t *);
+int seg_open(struct inode *, struct file *);
+int seg_release(struct inode *, struct file *);
 
 ssize_t number_show(struct device*, struct device_attribute*, char*);
 ssize_t number_store(struct device*, struct device_attribute*, const char*, size_t);
